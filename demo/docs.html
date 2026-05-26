@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem("buy-me-demo-theme");
+          var dark =
+            mode === "dark" ||
+            (mode !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) {
+            document.documentElement.dataset.theme = "dark";
+            document.documentElement.style.colorScheme = "dark";
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <title>Documentation — buy-me-a-coffee-cta</title>
+    <meta
+      name="description"
+      content="Install, configure, and integrate buy-me-a-coffee-cta — a scroll-driven Buy Me a Coffee button for any site."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="site-page site-docs">
+    <a class="skip-link" href="#docs-main">Skip to documentation</a>
+
+    <header class="site-header" id="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="./">buy-me-a-coffee-cta</a>
+        <div class="site-nav-wrap">
+          <button
+            type="button"
+            class="site-nav-toggle"
+            id="site-nav-toggle"
+            aria-expanded="false"
+            aria-controls="site-nav"
+            aria-label="Open menu"
+          >
+            <svg class="site-nav-toggle__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M4 7h16M4 12h16M4 17h16"
+              />
+            </svg>
+          </button>
+          <nav class="site-nav" id="site-nav" aria-label="Site">
+          <a class="site-nav__link" href="./" data-nav="playground">Playground</a>
+          <a class="site-nav__link is-active" href="./docs.html" data-nav="docs" aria-current="page">Docs</a>
+          <a class="site-nav__link" href="./about.html" data-nav="about">About</a>
+          </nav>
+        </div>
+        <nav class="site-links" aria-label="External links">
+          <button
+            type="button"
+            class="icon-link icon-link--theme"
+            id="theme-toggle"
+            aria-label="Switch to dark mode"
+            aria-pressed="false"
+            data-tooltip="Dark mode"
+          >
+            <svg class="icon-link__svg theme-toggle__sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+              />
+            </svg>
+            <svg class="icon-link__svg theme-toggle__moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+              />
+            </svg>
+          </button>
+          <a
+            class="icon-link icon-link--github"
+            href="https://github.com/getkode/buy-me-a-coffee-cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View on GitHub"
+            data-tooltip="View on GitHub"
+          >
+            <svg class="icon-link__svg" viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
+          </a>
+          <a
+            class="icon-link icon-link--npm"
+            href="https://www.npmjs.com/package/buy-me-a-coffee-cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View on npm"
+            data-tooltip="View on npm"
+          >
+            <svg class="icon-link__svg icon-link__svg--npm" viewBox="0 0 256 256" aria-hidden="true">
+              <polygon fill="#C12127" points="0,256 0,0 256,0 256,256" />
+              <polygon fill="#FFFFFF" points="48,48 208,48 208,208 176,208 176,80 128,80 128,208 48,208" />
+            </svg>
+          </a>
+          <a
+            class="icon-link icon-link--bmc"
+            id="bmc-icon-link"
+            href="https://buymeacoffee.com/getkode"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Buy me a coffee"
+            data-tooltip="Buy me a coffee"
+          >
+            <svg class="icon-link__svg icon-link__svg--bmc" viewBox="0 0 512 512" aria-hidden="true"></svg>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main page page--docs" id="docs-main">
+        <div class="page__layout">
+          <nav class="page__sidebar page__toc" aria-label="On this page">
+            <h2 class="page__toc-title">On this page</h2>
+            <ol class="page__toc-list">
+              <li><a href="#install">Install</a></li>
+              <li><a href="#quick-start">Quick start</a></li>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#api">API</a></li>
+              <li><a href="#tooltip">Tooltip</a></li>
+              <li><a href="#placement">Placement</a></li>
+              <li><a href="#scroll">Scroll target &amp; reverse</a></li>
+              <li><a href="#theming">Dark theme</a></li>
+              <li><a href="#utilities">Utility exports</a></li>
+              <li><a href="#size">Size</a></li>
+              <li><a href="#frameworks">Framework integration</a></li>
+            </ol>
+          </nav>
+
+          <div class="page__content">
+            <header class="page__hero">
+              <p class="page__eyebrow">Documentation</p>
+              <h1 class="page__title">buy-me-a-coffee-cta</h1>
+              <p class="page__lead">
+                A scroll-driven Buy Me a Coffee floating button for any website. Vanilla JavaScript, zero
+                dependencies.
+              </p>
+              <p class="page__actions">
+                <a class="btn btn--primary" href="./">Try the playground</a>
+                <a class="btn btn--ghost" href="https://www.npmjs.com/package/buy-me-a-coffee-cta">View on npm</a>
+              </p>
+            </header>
+
+            <article class="prose">
+          <section id="install">
+            <h2>Install</h2>
+            <pre data-lang="bash"><code>pnpm add buy-me-a-coffee-cta</code></pre>
+          </section>
+
+          <section id="quick-start">
+            <h2>Quick start</h2>
+            <pre><code>import { createCoffeeCta } from "buy-me-a-coffee-cta";
+import "buy-me-a-coffee-cta/style.css";
+
+createCoffeeCta({
+  username: "yourname",
+  label: "Buy me a coffee",
+  emoji: "☕",
+});</code></pre>
+            <p>
+              Use the <a href="./">playground</a> to tune options visually and copy a ready-to-paste
+              snippet for React, Vue, Solid, Angular, or Svelte.
+            </p>
+            <h3>CDN (no bundler)</h3>
+            <pre><code>&lt;link rel="stylesheet" href="https://unpkg.com/buy-me-a-coffee-cta/dist/style.css" /&gt;
+&lt;script type="module"&gt;
+  import { createCoffeeCta } from "https://unpkg.com/buy-me-a-coffee-cta/dist/index.js";
+  createCoffeeCta({ username: "yourname" });
+&lt;/script&gt;</code></pre>
+          </section>
+
+          <section id="configuration">
+            <h2>Configuration</h2>
+            <div class="prose-table-wrap">
+              <table class="prose-table prose-table--cols-4">
+                <thead>
+                  <tr>
+                    <th scope="col">Option</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Default</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>username</code></td>
+                    <td><code>string</code></td>
+                    <td>—</td>
+                    <td>BMC username (used if <code>url</code> is omitted)</td>
+                  </tr>
+                  <tr>
+                    <td><code>url</code></td>
+                    <td><code>string</code></td>
+                    <td>—</td>
+                    <td>Full BMC profile URL</td>
+                  </tr>
+                  <tr>
+                    <td><code>label</code></td>
+                    <td><code>string</code></td>
+                    <td><code>"Buy me a coffee"</code></td>
+                    <td>Tooltip text</td>
+                  </tr>
+                  <tr>
+                    <td><code>emoji</code></td>
+                    <td><code>string</code></td>
+                    <td><code>""</code></td>
+                    <td>Optional emoji prefix in tooltip</td>
+                  </tr>
+                  <tr>
+                    <td><code>size</code></td>
+                    <td><code>number</code></td>
+                    <td><code>40</code></td>
+                    <td>Cup size in px (desktop)</td>
+                  </tr>
+                  <tr>
+                    <td><code>position</code></td>
+                    <td>preset or offsets</td>
+                    <td><code>"bottom-right"</code></td>
+                    <td>Corner preset or custom offsets (fixed mode only)</td>
+                  </tr>
+                  <tr>
+                    <td><code>anchor</code></td>
+                    <td><code>Element | string | null</code></td>
+                    <td><code>null</code></td>
+                    <td>In-flow placement inside an element; ignores <code>position</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>tooltipPosition</code></td>
+                    <td><code>"auto" | …</code></td>
+                    <td><code>"auto"</code></td>
+                    <td>Tooltip side relative to the cup — same on desktop and mobile</td>
+                  </tr>
+                  <tr>
+                    <td><code>theme.*</code></td>
+                    <td><code>string</code></td>
+                    <td>BMC defaults</td>
+                    <td><code>yellow</code>, <code>ink</code>, <code>chipBg</code>, <code>chipFg</code>, …</td>
+                  </tr>
+                  <tr>
+                    <td><code>darkTheme.*</code></td>
+                    <td><code>string</code></td>
+                    <td>dark defaults</td>
+                    <td>Overrides when dark mode is active</td>
+                  </tr>
+                  <tr>
+                    <td><code>darkMode</code></td>
+                    <td><code>"auto" | "class" | …</code></td>
+                    <td><code>"auto"</code></td>
+                    <td><code>auto</code> = CSS; <code>media</code> / <code>class</code> = JS — see Dark theme</td>
+                  </tr>
+                  <tr>
+                    <td><code>scroll.*</code></td>
+                    <td>object</td>
+                    <td>see README</td>
+                    <td><code>target</code>, <code>reverse</code>, <code>fillDelay</code>, …</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              See the
+              <a href="https://github.com/getkode/buy-me-a-coffee-cta#configuration">full option list on GitHub</a>
+              for every property and default.
+            </p>
+          </section>
+
+          <section id="api">
+            <h2>API</h2>
+            <pre><code>const cta = createCoffeeCta({ username: "yourname" });
+
+cta.updateConfig({ label: "Support my work" });
+cta.destroy();
+cta.element; // HTMLAnchorElement</code></pre>
+            <p>Only one CTA per page is supported. Creating a second instance destroys the previous one.</p>
+            <p>
+              The CTA stays hidden until scroll animation begins. Short pages that fit in the viewport stay
+              visible when the cup would already be full.
+            </p>
+          </section>
+
+          <section id="tooltip">
+            <h2>Tooltip</h2>
+            <p>
+              Use <code>tooltipPosition</code> to pick a side: <code>left</code>, <code>right</code>,
+              <code>top</code>, <code>bottom</code>, or <code>auto</code> (default).
+            </p>
+            <ul>
+              <li><strong>Fixed mode</strong> — <code>auto</code> places the tooltip on the <strong>left</strong> (or <strong>right</strong> when the CTA is left-aligned).</li>
+              <li><strong>Flow mode</strong> (<code>anchor</code> set) — <code>auto</code> places the tooltip on the <strong>right</strong>.</li>
+            </ul>
+            <p>
+              The tooltip uses the <strong>same side on desktop and mobile</strong>. Desktop shows it on hover;
+              mobile shows it on tap, then auto-hides after <code>scroll.touchHideMs</code> (default 2.2s).
+            </p>
+          </section>
+
+          <section id="placement">
+            <h2>Placement</h2>
+            <p><strong>Fixed to the viewport</strong> (default):</p>
+            <pre><code>createCoffeeCta({ username: "yourname" });</code></pre>
+            <p><strong>Normal document flow inside an element:</strong></p>
+            <pre><code>createCoffeeCta({
+  username: "yourname",
+  anchor: "main",
+});</code></pre>
+            <p>When <code>anchor</code> is set, the host element controls layout and <code>position</code> is ignored.</p>
+          </section>
+
+          <section id="scroll">
+            <h2>Scroll target &amp; reverse</h2>
+            <p>Track a nested scroll container instead of the window:</p>
+            <pre><code>createCoffeeCta({
+  username: "yourname",
+  scroll: { target: ".article-body" },
+});</code></pre>
+            <p>Reverse mode — full cup at the top, empties as you scroll down:</p>
+            <pre><code>createCoffeeCta({
+  username: "yourname",
+  scroll: { reverse: true },
+});</code></pre>
+          </section>
+
+          <section id="theming">
+            <h2>Dark theme</h2>
+            <div class="prose-table-wrap">
+              <table class="prose-table prose-table--cols-2">
+                <thead>
+                  <tr>
+                    <th scope="col">Mode</th>
+                    <th scope="col">Behavior</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>"auto"</code></td>
+                    <td>Default. Light palette from JS; dark palette via CSS <code>prefers-color-scheme</code> using <code>darkTheme</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>"media"</code></td>
+                    <td>JS follows system color scheme; updates when preference changes.</td>
+                  </tr>
+                  <tr>
+                    <td><code>"class"</code></td>
+                    <td>JS follows <code>&lt;html data-theme="dark"&gt;</code> or <code>&lt;html class="dark"&gt;</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>"off"</code></td>
+                    <td>Light theme always.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <pre><code>createCoffeeCta({
+  username: "yourname",
+  darkMode: "auto",
+  darkTheme: {
+    ink: "#e8e8e8",
+    chipFg: "#ffffff",
+  },
+});</code></pre>
+            <p>
+              For sites that toggle dark mode with a class or data attribute on
+              <code>&lt;html&gt;</code>, use <code>darkMode: "class"</code>.
+            </p>
+          </section>
+
+          <section id="utilities">
+            <h2>Utility exports</h2>
+            <pre><code>import {
+  computeScrollState,
+  getScrollMetrics,
+  isCtaVisible,
+  normalizeBmcUrl,
+  resolveScrollTarget,
+  resolveUrl,
+} from "buy-me-a-coffee-cta";</code></pre>
+            <p>Helpers for custom scroll integrations, URL normalization, or tests.</p>
+          </section>
+
+          <section id="size">
+            <h2>Size</h2>
+            <p>Approximate gzipped size: ~7.5 KB JS + ~2.1 KB CSS. The JS bundle includes the inline SVG. Zero runtime dependencies.</p>
+          </section>
+
+          <section id="frameworks">
+            <h2>Framework integration</h2>
+            <p>
+              Mount after your component loads, call <code>destroy()</code> on unmount, and use
+              <code>updateConfig()</code> when props change. Do not reimplement scroll logic in framework state.
+            </p>
+
+            <div class="code-block code-block--snippet">
+              <div class="code-block__header code-block__header--tabs">
+                <span class="code-block__label">Framework</span>
+                <div
+                  class="code-tabs code-tabs--wrap"
+                  id="docs-framework-tabs"
+                  role="tablist"
+                  aria-label="Framework"
+                ></div>
+                <button
+                  type="button"
+                  class="code-block__copy btn btn--primary btn--sm"
+                  id="copy-docs-framework"
+                  aria-describedby="docs-framework-snippet"
+                >
+                  Copy
+                </button>
+              </div>
+              <pre
+                id="docs-framework-snippet"
+                class="code-block__pre code-block__pre--tall"
+                tabindex="0"
+                role="tabpanel"
+                aria-label="Framework integration snippet"
+              ></pre>
+            </div>
+
+            <p>
+              Use the <a href="./">playground</a> to tune options visually and copy a snippet with your
+              custom configuration.
+            </p>
+          </section>
+            </article>
+
+            <footer class="page__footer">
+              <p>
+                MIT License ·
+                <a href="./about.html">About this project</a> ·
+                <a href="https://github.com/getkode/buy-me-a-coffee-cta">GitHub</a>
+              </p>
+            </footer>
+          </div>
+        </div>
+    </main>
+
+    <script type="module" src="./docs.ts"></script>
+  </body>
+</html>

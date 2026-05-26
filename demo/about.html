@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem("buy-me-demo-theme");
+          var dark =
+            mode === "dark" ||
+            (mode !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) {
+            document.documentElement.dataset.theme = "dark";
+            document.documentElement.style.colorScheme = "dark";
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <title>About — buy-me-a-coffee-cta</title>
+    <meta
+      name="description"
+      content="About buy-me-a-coffee-cta — a custom scroll-driven Buy Me a Coffee button, built by getkode."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="site-page site-about">
+    <a class="skip-link" href="#about-main">Skip to about</a>
+
+    <header class="site-header" id="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="./">buy-me-a-coffee-cta</a>
+        <div class="site-nav-wrap">
+          <button
+            type="button"
+            class="site-nav-toggle"
+            id="site-nav-toggle"
+            aria-expanded="false"
+            aria-controls="site-nav"
+            aria-label="Open menu"
+          >
+            <svg class="site-nav-toggle__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M4 7h16M4 12h16M4 17h16"
+              />
+            </svg>
+          </button>
+          <nav class="site-nav" id="site-nav" aria-label="Site">
+          <a class="site-nav__link" href="./" data-nav="playground">Playground</a>
+          <a class="site-nav__link" href="./docs.html" data-nav="docs">Docs</a>
+          <a class="site-nav__link is-active" href="./about.html" data-nav="about" aria-current="page">About</a>
+          </nav>
+        </div>
+        <nav class="site-links" aria-label="External links">
+          <button
+            type="button"
+            class="icon-link icon-link--theme"
+            id="theme-toggle"
+            aria-label="Switch to dark mode"
+            aria-pressed="false"
+            data-tooltip="Dark mode"
+          >
+            <svg class="icon-link__svg theme-toggle__sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+              />
+            </svg>
+            <svg class="icon-link__svg theme-toggle__moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+              />
+            </svg>
+          </button>
+          <a
+            class="icon-link icon-link--github"
+            href="https://github.com/getkode/buy-me-a-coffee-cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View on GitHub"
+            data-tooltip="View on GitHub"
+          >
+            <svg class="icon-link__svg" viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
+          </a>
+          <a
+            class="icon-link icon-link--npm"
+            href="https://www.npmjs.com/package/buy-me-a-coffee-cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View on npm"
+            data-tooltip="View on npm"
+          >
+            <svg class="icon-link__svg icon-link__svg--npm" viewBox="0 0 256 256" aria-hidden="true">
+              <polygon fill="#C12127" points="0,256 0,0 256,0 256,256" />
+              <polygon fill="#FFFFFF" points="48,48 208,48 208,208 176,208 176,80 128,80 128,208 48,208" />
+            </svg>
+          </a>
+          <a
+            class="icon-link icon-link--bmc"
+            id="bmc-icon-link"
+            href="https://buymeacoffee.com/getkode"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Buy me a coffee"
+            data-tooltip="Buy me a coffee"
+          >
+            <svg class="icon-link__svg icon-link__svg--bmc" viewBox="0 0 512 512" aria-hidden="true"></svg>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main page page--about" id="about-main">
+        <div class="page__content">
+        <header class="page__hero">
+          <p class="page__eyebrow">About</p>
+          <h1 class="page__title">Your own Buy Me a Coffee button</h1>
+          <p class="page__lead">
+            <strong>buy-me-a-coffee-cta</strong> is a small, dependency-free library that adds a scroll-driven
+            coffee cup to your site. It links to your Buy Me a Coffee profile — but the look, animation, and
+            placement are entirely under your control.
+          </p>
+        </header>
+
+        <article class="prose">
+          <section>
+            <h2>Not the official embed</h2>
+            <p>
+              Buy Me a Coffee provides a paste-in widget. This package is a custom alternative: a cup that
+              draws and fills as visitors scroll, with theming, anchor placement, reverse scroll, and framework
+              snippets — all configurable from the <a href="./">playground</a>.
+            </p>
+          </section>
+
+          <section>
+            <h2>What visitors experience</h2>
+            <ul>
+              <li>At the top — a quiet, mostly empty cup</li>
+              <li>While scrolling — outline draws, then coffee fills</li>
+              <li>On hover or tap — tooltip on the same side (desktop: hover; mobile: tap)</li>
+              <li>At the bottom — full cup as a gentle reminder</li>
+              <li>On click — your BMC page opens in a new tab</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Author</h2>
+            <p>
+              Built by <strong>Salman Amakran</strong> (<a href="https://github.com/getkode">getkode</a>).
+              If this project helps you, consider
+              <a href="https://buymeacoffee.com/getkode">buying me a coffee</a>.
+            </p>
+          </section>
+
+          <section>
+            <h2>Links</h2>
+            <ul>
+              <li><a href="./">Interactive playground</a></li>
+              <li><a href="./docs.html">Documentation</a></li>
+              <li><a href="https://github.com/getkode/buy-me-a-coffee-cta">Source on GitHub</a></li>
+              <li><a href="https://www.npmjs.com/package/buy-me-a-coffee-cta">npm package</a></li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>License</h2>
+            <p>MIT — see the <a href="https://github.com/getkode/buy-me-a-coffee-cta/blob/main/LICENSE">LICENSE</a> file in the repository.</p>
+          </section>
+        </article>
+
+        <footer class="page__footer">
+          <p>
+            <a class="btn btn--primary" href="./">Open playground</a>
+          </p>
+        </footer>
+        </div>
+    </main>
+
+    <script type="module" src="./about.ts"></script>
+  </body>
+</html>

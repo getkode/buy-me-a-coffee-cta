@@ -1,0 +1,9 @@
+.claude/
+*.log
+.DS_Store
+
+coverage/
+demo/dist/
+dist/
+docs/
+node_modules/

@@ -1,0 +1,383 @@
+/* Scroll-draw coffee cup CTA — self-contained, theme-adaptive */
+
+.coffee-cta {
+  --bmc-yellow: #ffdd00;
+  --bmc-dark: #0d0c22;
+  --bmc-chip-bg: var(--bmc-yellow);
+  --bmc-chip-fg: var(--bmc-dark);
+  --coffee-cream: var(--bmc-yellow);
+  --coffee-ink: var(--bmc-dark);
+  --bmc-focus-ring: #0066cc;
+  --bmc-radius: 6px;
+  --bmc-font: system-ui, sans-serif;
+  --progress: 0;
+  --fill: 0;
+  --coffee-size: 40px;
+  --coffee-size-mobile: 56px;
+  --bmc-offset-x: 28px;
+  --bmc-offset-y: 28px;
+  --bmc-offset-x-mobile: 12px;
+  --bmc-offset-y-mobile: 16px;
+
+  position: fixed;
+  z-index: 44;
+  width: var(--coffee-size);
+  height: var(--coffee-size);
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  font-family: var(--bmc-font);
+  transition: filter 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.coffee-cta[data-bmc-position-mode="flow"] {
+  position: static;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  z-index: auto;
+  overflow: visible;
+}
+
+.coffee-cta[data-bmc-position-mode="flow"]:not(.is-hidden) {
+  display: inline-block;
+}
+
+.coffee-cta.is-hidden {
+  display: none !important;
+  pointer-events: none;
+}
+
+.coffee-cta[data-bmc-position="bottom-right"] {
+  bottom: max(var(--bmc-offset-y), env(safe-area-inset-bottom));
+  right: max(var(--bmc-offset-x), env(safe-area-inset-right));
+  top: auto;
+  left: auto;
+}
+
+.coffee-cta[data-bmc-position="bottom-left"] {
+  bottom: max(var(--bmc-offset-y), env(safe-area-inset-bottom));
+  left: max(var(--bmc-offset-x), env(safe-area-inset-left));
+  top: auto;
+  right: auto;
+}
+
+.coffee-cta[data-bmc-position="top-right"] {
+  top: max(var(--bmc-offset-y), env(safe-area-inset-top));
+  right: max(var(--bmc-offset-x), env(safe-area-inset-right));
+  bottom: auto;
+  left: auto;
+}
+
+.coffee-cta[data-bmc-position="top-left"] {
+  top: max(var(--bmc-offset-y), env(safe-area-inset-top));
+  left: max(var(--bmc-offset-x), env(safe-area-inset-left));
+  bottom: auto;
+  right: auto;
+}
+
+.coffee-cta[data-bmc-theme="dark"] {
+  --coffee-ink: #e8e8e8;
+  --bmc-chip-fg: #ffffff;
+}
+
+.coffee-cta__cup {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.coffee-cta__svg-wrap,
+.coffee-cta__svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.coffee-cta__svg-wrap svg {
+  overflow: visible;
+}
+
+.coffee-cta__tooltip {
+  position: absolute;
+  background: var(--bmc-chip-bg);
+  color: var(--bmc-chip-fg);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 7px 12px;
+  border-radius: var(--bmc-radius);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Capture clicks/hover over the visible tooltip (it sits outside the cup box). */
+.coffee-cta.is-bottom .coffee-cta__tooltip,
+.coffee-cta.is-active .coffee-cta__tooltip,
+.coffee-cta:focus-visible .coffee-cta__tooltip {
+  pointer-events: auto;
+}
+
+.coffee-cta__emoji {
+  margin-right: 0.35em;
+}
+
+.coffee-cta__emoji:empty {
+  display: none;
+}
+
+.coffee-cta__tooltip::after {
+  content: "";
+  position: absolute;
+  border: 5px solid transparent;
+}
+
+/* Tooltip — left of cup */
+.coffee-cta[data-bmc-tooltip-position="left"] .coffee-cta__tooltip {
+  right: calc(100% + 4px);
+  top: 50%;
+  left: auto;
+  bottom: auto;
+  transform: translateY(-50%) scale(0.96);
+}
+
+.coffee-cta[data-bmc-tooltip-position="left"] .coffee-cta__tooltip::after {
+  left: 100%;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translateY(-50%);
+  border-left-color: var(--bmc-chip-bg);
+}
+
+/* Tooltip — right of cup */
+.coffee-cta[data-bmc-tooltip-position="right"] .coffee-cta__tooltip {
+  left: calc(100% + 4px);
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translateY(-50%) scale(0.96);
+}
+
+.coffee-cta[data-bmc-tooltip-position="right"] .coffee-cta__tooltip::after {
+  right: 100%;
+  top: 50%;
+  left: auto;
+  bottom: auto;
+  transform: translateY(-50%);
+  border-right-color: var(--bmc-chip-bg);
+}
+
+/* Tooltip — above cup */
+.coffee-cta[data-bmc-tooltip-position="top"] .coffee-cta__tooltip {
+  left: 50%;
+  bottom: calc(100% + 4px);
+  top: auto;
+  right: auto;
+  transform: translate(-50%, 4px) scale(0.96);
+}
+
+.coffee-cta[data-bmc-tooltip-position="top"] .coffee-cta__tooltip::after {
+  left: 50%;
+  top: 100%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, 0);
+  border-top-color: var(--bmc-chip-bg);
+}
+
+/* Tooltip — below cup */
+.coffee-cta[data-bmc-tooltip-position="bottom"] .coffee-cta__tooltip {
+  left: 50%;
+  top: calc(100% + 4px);
+  bottom: auto;
+  right: auto;
+  transform: translate(-50%, -4px) scale(0.96);
+}
+
+.coffee-cta[data-bmc-tooltip-position="bottom"] .coffee-cta__tooltip::after {
+  left: 50%;
+  bottom: 100%;
+  top: auto;
+  right: auto;
+  transform: translate(-50%, 0);
+  border-bottom-color: var(--bmc-chip-bg);
+}
+
+/* Bottom of page + touch tap (mobile) */
+.coffee-cta.is-bottom[data-bmc-tooltip-position="left"] .coffee-cta__tooltip,
+.coffee-cta.is-active[data-bmc-tooltip-position="left"] .coffee-cta__tooltip,
+.coffee-cta.is-bottom[data-bmc-tooltip-position="right"] .coffee-cta__tooltip,
+.coffee-cta.is-active[data-bmc-tooltip-position="right"] .coffee-cta__tooltip {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.coffee-cta.is-bottom[data-bmc-tooltip-position="top"] .coffee-cta__tooltip,
+.coffee-cta.is-active[data-bmc-tooltip-position="top"] .coffee-cta__tooltip,
+.coffee-cta.is-bottom[data-bmc-tooltip-position="bottom"] .coffee-cta__tooltip,
+.coffee-cta.is-active[data-bmc-tooltip-position="bottom"] .coffee-cta__tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.coffee-cta.is-bottom .coffee-cta__cup svg path,
+.coffee-cta.is-active .coffee-cta__cup svg path {
+  stroke-dashoffset: 0;
+}
+
+.coffee-cta.is-bottom .coffee-cta__cup svg .coffee-cta__outline,
+.coffee-cta.is-active .coffee-cta__cup svg .coffee-cta__outline {
+  fill: var(--coffee-ink);
+}
+
+.coffee-cta.is-bottom .coffee-cta__cup svg .coffee-cta__body,
+.coffee-cta.is-active .coffee-cta__cup svg .coffee-cta__body {
+  fill: var(--coffee-cream);
+  clip-path: inset(0);
+}
+
+/* Fine pointer only — avoids sticky :hover on touch devices */
+@media (hover: hover) and (pointer: fine) {
+  .coffee-cta:not(.is-hidden):hover {
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.18));
+  }
+
+  .coffee-cta:not(.is-hidden):hover .coffee-cta__tooltip {
+    pointer-events: auto;
+  }
+
+  .coffee-cta[data-bmc-theme="dark"]:not(.is-hidden):hover {
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.45));
+  }
+
+  .coffee-cta:not(.is-hidden):hover[data-bmc-tooltip-position="left"] .coffee-cta__tooltip,
+  .coffee-cta:not(.is-hidden):hover[data-bmc-tooltip-position="right"] .coffee-cta__tooltip {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+
+  .coffee-cta:not(.is-hidden):hover[data-bmc-tooltip-position="top"] .coffee-cta__tooltip,
+  .coffee-cta:not(.is-hidden):hover[data-bmc-tooltip-position="bottom"] .coffee-cta__tooltip {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+
+  .coffee-cta:not(.is-hidden):hover .coffee-cta__cup svg path {
+    stroke-dashoffset: 0;
+  }
+
+  .coffee-cta:not(.is-hidden):hover .coffee-cta__cup svg .coffee-cta__outline {
+    fill: var(--coffee-ink);
+  }
+
+  .coffee-cta:not(.is-hidden):hover .coffee-cta__cup svg .coffee-cta__body {
+    fill: var(--coffee-cream);
+    clip-path: inset(0);
+  }
+}
+
+.coffee-cta:focus-visible {
+  outline: 2px solid var(--bmc-focus-ring);
+  outline-offset: 4px;
+  border-radius: var(--bmc-radius);
+}
+
+.coffee-cta:focus-visible[data-bmc-tooltip-position="left"] .coffee-cta__tooltip,
+.coffee-cta:focus-visible[data-bmc-tooltip-position="right"] .coffee-cta__tooltip {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.coffee-cta:focus-visible[data-bmc-tooltip-position="top"] .coffee-cta__tooltip,
+.coffee-cta:focus-visible[data-bmc-tooltip-position="bottom"] .coffee-cta__tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.coffee-cta:focus-visible .coffee-cta__cup svg path {
+  stroke-dashoffset: 0;
+}
+
+.coffee-cta:focus-visible .coffee-cta__cup svg .coffee-cta__outline {
+  fill: var(--coffee-ink);
+}
+
+.coffee-cta:focus-visible .coffee-cta__cup svg .coffee-cta__body {
+  fill: var(--coffee-cream);
+  clip-path: inset(0);
+}
+
+.coffee-cta__cup svg path {
+  fill: transparent;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: var(--len, 4000);
+  stroke-dashoffset: calc(var(--len, 4000) * (1 - var(--progress, 0)));
+  transition:
+    stroke-dashoffset 0.15s linear,
+    fill 0.35s ease,
+    stroke 0.25s ease,
+    clip-path 0.15s linear;
+}
+
+.coffee-cta--reduced .coffee-cta__cup svg path {
+  transition: fill 0.35s ease, stroke 0.25s ease;
+}
+
+.coffee-cta__cup svg .coffee-cta__outline {
+  stroke: var(--coffee-ink);
+}
+
+.coffee-cta__cup svg .coffee-cta__body {
+  stroke: var(--coffee-cream);
+  fill: var(--coffee-cream);
+  clip-path: inset(calc((1 - var(--fill, 0)) * 100%) 0 0 0);
+}
+
+@media (max-width: 640px) {
+  .coffee-cta {
+    --coffee-size: var(--coffee-size-mobile);
+  }
+
+  .coffee-cta[data-bmc-position="bottom-right"] {
+    bottom: max(var(--bmc-offset-y-mobile), env(safe-area-inset-bottom));
+    right: max(var(--bmc-offset-x-mobile), env(safe-area-inset-right));
+  }
+
+  .coffee-cta[data-bmc-position="bottom-left"] {
+    bottom: max(var(--bmc-offset-y-mobile), env(safe-area-inset-bottom));
+    left: max(var(--bmc-offset-x-mobile), env(safe-area-inset-left));
+  }
+
+  .coffee-cta[data-bmc-position="top-right"] {
+    top: max(var(--bmc-offset-y-mobile), env(safe-area-inset-top));
+    right: max(var(--bmc-offset-x-mobile), env(safe-area-inset-right));
+  }
+
+  .coffee-cta[data-bmc-position="top-left"] {
+    top: max(var(--bmc-offset-y-mobile), env(safe-area-inset-top));
+    left: max(var(--bmc-offset-x-mobile), env(safe-area-inset-left));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coffee-cta__tooltip,
+  .coffee-cta__cup svg path {
+    transition: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .coffee-cta[data-bmc-dark-mode="auto"] {
+    --coffee-ink: var(--bmc-auto-ink);
+    --bmc-chip-fg: var(--bmc-auto-chip-fg);
+    --bmc-yellow: var(--bmc-auto-yellow);
+    --coffee-cream: var(--bmc-auto-yellow);
+    --bmc-chip-bg: var(--bmc-auto-chip-bg);
+  }
+}

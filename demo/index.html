@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem("buy-me-demo-theme");
+          var dark =
+            mode === "dark" ||
+            (mode !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) {
+            document.documentElement.dataset.theme = "dark";
+            document.documentElement.style.colorScheme = "dark";
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <title>Playground — buy-me-a-coffee-cta</title>
+    <meta
+      name="description"
+      content="Interactive demo for buy-me-a-coffee-cta — configure a scroll-driven Buy Me a Coffee button and copy integration code."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="site-page site-playground">
+    <a class="skip-link" id="skip-link" href="#panel-configure">Skip to playground</a>
+
+    <header class="site-header" id="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="./">buy-me-a-coffee-cta</a>
+        <div class="site-nav-wrap">
+          <button
+            type="button"
+            class="site-nav-toggle"
+            id="site-nav-toggle"
+            aria-expanded="false"
+            aria-controls="site-nav"
+            aria-label="Open menu"
+          >
+            <svg class="site-nav-toggle__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M4 7h16M4 12h16M4 17h16"
+              />
+            </svg>
+          </button>
+          <nav class="site-nav" id="site-nav" aria-label="Site">
+          <a class="site-nav__link is-active" href="./" data-nav="playground" aria-current="page">Playground</a>
+          <a class="site-nav__link" href="./docs.html" data-nav="docs">Docs</a>
+          <a class="site-nav__link" href="./about.html" data-nav="about">About</a>
+          </nav>
+        </div>
+        <nav class="site-links" aria-label="External links">
+          <button
+            type="button"
+            class="icon-link icon-link--theme"
+            id="theme-toggle"
+            aria-label="Switch to dark mode"
+            aria-pressed="false"
+            data-tooltip="Dark mode"
+          >
+            <svg class="icon-link__svg theme-toggle__sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+              />
+            </svg>
+            <svg class="icon-link__svg theme-toggle__moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+              />
+            </svg>
+          </button>
+          <a
+            class="icon-link icon-link--github"
+            href="https://github.com/getkode/buy-me-a-coffee-cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View on GitHub"
+            data-tooltip="View on GitHub"
+          >
+            <svg class="icon-link__svg" viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
+          </a>
+          <a
+            class="icon-link icon-link--npm"
+            href="https://www.npmjs.com/package/buy-me-a-coffee-cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View on npm"
+            data-tooltip="View on npm"
+          >
+            <svg class="icon-link__svg icon-link__svg--npm" viewBox="0 0 256 256" aria-hidden="true">
+              <polygon fill="#C12127" points="0,256 0,0 256,0 256,256" />
+              <polygon fill="#FFFFFF" points="48,48 208,48 208,208 176,208 176,80 128,80 128,208 48,208" />
+            </svg>
+          </a>
+          <a
+            class="icon-link icon-link--bmc"
+            id="bmc-icon-link"
+            href="https://buymeacoffee.com/getkode"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Buy me a coffee"
+            data-tooltip="Buy me a coffee"
+          >
+            <svg class="icon-link__svg icon-link__svg--bmc" viewBox="0 0 512 512" aria-hidden="true"></svg>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main page page--playground is-tab-configure" id="app">
+      <div class="app-tabs">
+        <div class="app-tabs__list" role="tablist" aria-label="Demo views">
+          <button
+            type="button"
+            id="tab-configure"
+            class="app-tabs__btn is-active"
+            data-tab="configure"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-configure"
+          >
+            Configure
+          </button>
+          <button
+            type="button"
+            id="tab-preview"
+            class="app-tabs__btn"
+            data-tab="preview"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-preview"
+          >
+            Preview
+          </button>
+        </div>
+      </div>
+
+      <div class="playground__layout">
+      <aside class="panel" id="panel-configure" aria-labelledby="panel-title">
+        <header class="panel__header">
+          <div class="panel__brand">
+            <span class="panel__badge">Demo</span>
+            <h1 class="panel__title" id="panel-title">buy-me-a-coffee-cta</h1>
+          </div>
+
+          <p class="panel__hint">
+            Interactive playground for <strong>buy-me-a-coffee-cta</strong>: a scroll-driven Buy Me a
+            Coffee button you can drop into any site. Adjust settings in this panel, then scroll the
+            preview to see the cup reveal, draw, and fill.
+          </p>
+        </header>
+
+        <div class="panel__body">
+          <section class="panel__section" id="panel-section-presets">
+            <h2 class="panel__section-title">Demo preset</h2>
+
+            <label class="field">
+              <span class="field__label">Load a starting point</span>
+              <select id="preset-select" aria-describedby="preset-hint">
+                <option value="default" selected>Default — fixed bottom-right</option>
+                <option value="blog">Blog sidebar — in theming card</option>
+                <option value="reverse">Reverse hero — full cup at top</option>
+                <option value="dark">Dark brand — dark preview palette</option>
+              </select>
+            </label>
+            <p id="preset-hint" class="field-note">Applies a demo starting point; you can still tweak every control afterward.</p>
+
+            <button type="button" class="btn btn--ghost btn--block" id="reset-btn">Reset all settings</button>
+          </section>
+
+          <section class="panel__section" id="panel-section-content">
+            <h2 class="panel__section-title">Content</h2>
+
+            <label class="field">
+              <span class="field__label">Username</span>
+              <input id="username" type="text" value="getkode" />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Label</span>
+              <input id="label" type="text" value="Buy me a coffee" />
+            </label>
+
+            <details class="details" id="emoji-details">
+              <summary class="details__summary">
+                Emoji
+                <span id="emoji-summary" class="details__value">☕</span>
+              </summary>
+              <div id="emoji-picker" class="emoji-picker"></div>
+              <p class="field-note emoji-picker__hint">Arrow keys within a group · Tab for next group · Esc to close</p>
+            </details>
+
+            <label class="field">
+              <span class="field__label">Font</span>
+              <select id="font">
+                <option value="system-ui, sans-serif">System UI</option>
+                <option value="Inter, sans-serif">Inter</option>
+                <option value="Roboto, sans-serif">Roboto</option>
+                <option value="Open Sans, sans-serif">Open Sans</option>
+                <option value="Lato, sans-serif">Lato</option>
+                <option value="Poppins, sans-serif">Poppins</option>
+                <option value="Montserrat, sans-serif">Montserrat</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="Merriweather, serif">Merriweather</option>
+                <option value="Playfair Display, serif">Playfair Display</option>
+              </select>
+            </label>
+
+            <label class="field field--range">
+              <span class="field__label">Cup size</span>
+              <div class="range-row">
+                <input id="size" type="range" min="40" max="96" value="40" />
+                <output id="size-value" class="range-value" for="size">40</output>
+                <span class="range-unit">px</span>
+              </div>
+            </label>
+          </section>
+
+          <section class="panel__section" id="panel-section-placement">
+            <h2 class="panel__section-title">Placement</h2>
+
+            <label class="field">
+              <span class="field__label">Mount target</span>
+              <select id="anchor">
+                <option value="window" selected>Window (fixed)</option>
+                <option value="#preview-bmc-cta-container">In-flow in preview section</option>
+                <option value="#theme-bmc-cta-container">In-flow in theming section</option>
+              </select>
+            </label>
+
+            <label class="field" id="position-field">
+              <span class="field__label">Corner <span class="field__hint">(fixed only)</span></span>
+              <select id="position" aria-describedby="position-hint">
+                <option value="bottom-right" selected>bottom-right</option>
+                <option value="bottom-left">bottom-left</option>
+                <option value="top-right">top-right</option>
+                <option value="top-left">top-left</option>
+              </select>
+            </label>
+            <p id="position-hint" class="field-note" hidden>Only applies when the CTA is fixed to the window.</p>
+
+            <label class="field">
+              <span class="field__label">Tooltip position</span>
+              <select id="tooltipPosition" aria-describedby="tooltip-hint">
+                <option value="auto" selected>Auto</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+              </select>
+            </label>
+            <p id="tooltip-hint" class="field-note" hidden>Auto places the tooltip on the right in flow mode.</p>
+          </section>
+
+          <section class="panel__section" id="panel-section-scroll">
+            <h2 class="panel__section-title">Scroll behavior</h2>
+
+            <label class="field">
+              <span class="field__label">Scroll target</span>
+              <select id="scrollTarget">
+                <option value="#app">Preview panel</option>
+                <option value="">Window</option>
+              </select>
+            </label>
+
+            <label class="field field--range">
+              <span class="field__label">Fill delay</span>
+              <div class="range-row">
+                <input id="fillDelay" type="range" min="0" max="0.4" step="0.01" value="0.12" />
+                <output id="fillDelay-value" class="range-value" for="fillDelay">0.12</output>
+              </div>
+            </label>
+
+            <label class="field field--checkbox">
+              <input id="reverse" type="checkbox" />
+              <span>Reverse scroll (full at top, empties downward)</span>
+            </label>
+          </section>
+
+          <section class="panel__section" id="panel-section-theme">
+            <h2 class="panel__section-title">Theme</h2>
+
+            <label class="field">
+              <span class="field__label">Theme preset</span>
+              <select id="theme-preset-select">
+                <option value="bmc" selected>BMC default — classic yellow</option>
+                <option value="mono">Monochrome — neutral gray</option>
+                <option value="contrast">High contrast — bold black &amp; yellow</option>
+                <option value="ocean">Ocean — teal &amp; navy</option>
+                <option value="forest">Forest — green &amp; earth</option>
+                <option value="sunset">Sunset — coral &amp; amber</option>
+                <option value="rose">Rose — pink &amp; wine</option>
+                <option value="midnight">Midnight — indigo &amp; violet</option>
+                <option value="lavender">Lavender — soft purple</option>
+                <option value="espresso">Espresso — coffee brown</option>
+              </select>
+            </label>
+
+            <div class="theme-grid">
+              <fieldset class="theme-card">
+                <legend>Light</legend>
+                <label class="color-row">
+                  <span>Coffee</span>
+                  <input id="light-yellow" type="color" value="#ffdd00" />
+                </label>
+                <label class="color-row">
+                  <span>Cup ink</span>
+                  <input id="light-ink" type="color" value="#0d0c22" />
+                </label>
+                <label class="color-row">
+                  <span>Tooltip bg</span>
+                  <input id="light-chip-bg" type="color" value="#ffdd00" />
+                </label>
+                <label class="color-row">
+                  <span>Tooltip text</span>
+                  <input id="light-chip-fg" type="color" value="#0d0c22" />
+                </label>
+              </fieldset>
+
+              <fieldset class="theme-card">
+                <legend>Dark</legend>
+                <label class="color-row">
+                  <span>Coffee</span>
+                  <input id="dark-yellow" type="color" value="#ffdd00" />
+                </label>
+                <label class="color-row">
+                  <span>Cup ink</span>
+                  <input id="dark-ink" type="color" value="#e8e8e8" />
+                </label>
+                <label class="color-row">
+                  <span>Tooltip bg</span>
+                  <input id="dark-chip-bg" type="color" value="#ffdd00" />
+                </label>
+                <label class="color-row">
+                  <span>Tooltip text</span>
+                  <input id="dark-chip-fg" type="color" value="#ffffff" />
+                </label>
+              </fieldset>
+            </div>
+
+            <label class="field field--checkbox">
+              <input id="darkPage" type="checkbox" />
+              <span>Preview dark theme</span>
+            </label>
+          </section>
+        </div>
+
+        <div class="panel__footer">
+          <div class="panel__footer-actions">
+            <button type="button" class="integration-cta integration-cta--share" id="share-config">
+              <span class="integration-cta__code integration-cta__code--share" aria-hidden="true">↗</span>
+              <span class="integration-cta__title">Share your config</span>
+            </button>
+            <button type="button" class="integration-cta" id="show-integration-code">
+              <span class="integration-cta__code" aria-hidden="true">&lt;/&gt;</span>
+              <span class="integration-cta__title">Show the code</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="preview" id="panel-preview" aria-labelledby="preview-title">
+        <header class="preview__header">
+          <div class="preview__header-row">
+            <div class="preview__header-text">
+              <h2 class="preview__title" id="preview-title">Live preview</h2>
+              <p class="preview__subtitle" id="preview-subtitle">Scroll this panel to reveal and animate the cup</p>
+            </div>
+            <span id="status-chip" class="status-chip status-chip--hidden" aria-live="polite">Hidden</span>
+          </div>
+
+          <p id="metrics-readout" class="metrics-readout" aria-live="polite">
+            Scroll 0% · Outline 0% · Fill 0%
+          </p>
+
+          <div class="preview__progress" aria-hidden="true">
+            <div id="scroll-progress" class="preview__progress-bar"></div>
+          </div>
+
+          <div class="preview-toolbar">
+            <div class="simulate-scroll" role="group" aria-label="Simulate scroll position">
+              <span class="simulate-scroll__label">Jump to</span>
+              <button type="button" class="btn btn--ghost btn--sm" data-scroll-to="0">Top</button>
+              <button type="button" class="btn btn--ghost btn--sm" data-scroll-to="0.5">Middle</button>
+              <button type="button" class="btn btn--ghost btn--sm" data-scroll-to="1">Bottom</button>
+            </div>
+          </div>
+        </header>
+
+        <div class="content" id="scroll-content">
+          <section class="hero" id="cta-anchor-intro">
+            <p class="hero__eyebrow">Scroll-driven CTA</p>
+            <h2 class="hero__title">Watch the cup draw itself as you scroll</h2>
+            <p class="hero__lead">
+              This preview simulates a long page so you can test scroll-linked animation — outline
+              draw, coffee fill, tooltip behavior, and visibility rules — before adding the button to
+              your own site.
+            </p>
+            <ul class="hero__tips">
+              <li>The cup stays hidden until you start scrolling</li>
+              <li>Hover the cup on desktop to preview the full state</li>
+              <li>Tap the cup on mobile — tooltip on the same side, auto-hides after ~2s</li>
+              <li>Try the Blog sidebar preset to see in-flow placement in the theme card</li>
+            </ul>
+          </section>
+
+          <article class="content-card" aria-labelledby="card-outline-draw">
+            <span class="content-card__step" aria-hidden="true">01</span>
+            <h3 id="card-outline-draw">Outline draw</h3>
+            <p>
+              The cup outline follows scroll progress. Coffee fill starts slightly later,
+              creating a two-phase animation.
+            </p>
+            <button type="button" class="content-card__action" data-panel-section="panel-section-scroll">
+              Open scroll settings
+            </button>
+          </article>
+
+          <article class="content-card" aria-labelledby="card-placement">
+            <span class="content-card__step" aria-hidden="true">02</span>
+            <h3 id="card-placement">Placement modes</h3>
+            <p>
+              Fixed mode pins the cup to a viewport corner. Flow mode mounts it inside a page element
+              — the Blog sidebar preset places it in the theme card below. Active anchors show a dashed outline.
+            </p>
+            <button type="button" class="content-card__action" data-panel-section="panel-section-placement">
+              Open placement settings
+            </button>
+          </article>
+
+          <article class="content-card" aria-labelledby="card-tooltip">
+            <span class="content-card__step" aria-hidden="true">03</span>
+            <h3 id="card-tooltip">Tooltip control</h3>
+            <p>
+              Pick a tooltip side or leave it on auto. The same side is used on desktop and mobile — flow
+              mode defaults to the right; fixed mode picks left/right from corner.
+            </p>
+            <button type="button" class="content-card__action" data-panel-section="panel-section-placement">
+              Open placement settings
+            </button>
+          </article>
+
+          <article class="content-card" aria-labelledby="card-theme">
+            <span class="content-card__step" aria-hidden="true">04</span>
+            <h3 id="card-theme">Theme tuning</h3>
+            <p>
+              Use theme presets or adjust light and dark palette tokens, then toggle the dark
+              preview.
+            </p>
+            <button type="button" class="content-card__action" data-panel-section="panel-section-theme">
+              Open theme settings
+            </button>
+            <div class="cta-anchor bmc-cta-container" id="theme-bmc-cta-container"></div>
+          </article>
+
+          <article class="content-card" aria-labelledby="card-reverse">
+            <span class="content-card__step" aria-hidden="true">05</span>
+            <h3 id="card-reverse">Reverse scroll</h3>
+            <p>
+              Enable reverse mode to start with a full cup at the top and empty it as you scroll
+              down. The cup hides again at the bottom.
+            </p>
+            <button type="button" class="content-card__action" data-panel-section="panel-section-scroll">
+              Open scroll settings
+            </button>
+          </article>
+
+          <section class="integration-panel" id="integration-panel" aria-labelledby="integration-panel-title">
+            <header class="integration-panel__header">
+              <div class="integration-panel__header-text">
+                <p class="integration-panel__eyebrow">Install &amp; use</p>
+                <h2 id="integration-panel-title" class="integration-panel__title">Use this config in your project</h2>
+              </div>
+              <a class="integration-panel__docs-link" href="./docs.html">Full documentation</a>
+            </header>
+
+            <div class="integration-panel__body">
+              <div class="code-block">
+                <div class="code-block__header code-block__header--tabs">
+                  <span class="code-block__label">Install</span>
+                  <div class="code-tabs" role="tablist" aria-label="Package manager">
+                    <button
+                      type="button"
+                      id="tab-pm-pnpm"
+                      class="code-tab is-active"
+                      data-pm="pnpm"
+                      role="tab"
+                      aria-selected="true"
+                      aria-controls="panel-pm-snippet"
+                    >
+                      pnpm
+                    </button>
+                    <button
+                      type="button"
+                      id="tab-pm-npm"
+                      class="code-tab"
+                      data-pm="npm"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-pm-snippet"
+                    >
+                      npm
+                    </button>
+                    <button
+                      type="button"
+                      id="tab-pm-yarn"
+                      class="code-tab"
+                      data-pm="yarn"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-pm-snippet"
+                    >
+                      yarn
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    class="code-block__copy btn btn--primary btn--sm"
+                    id="copy-install"
+                    aria-describedby="install-snippet"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <div id="panel-pm-snippet" class="code-block__row" role="tabpanel" aria-labelledby="tab-pm-pnpm">
+                  <pre id="install-snippet" class="code-block__pre" tabindex="0" aria-label="Install command">pnpm add buy-me-a-coffee-cta</pre>
+                </div>
+              </div>
+
+              <div class="code-block code-block--snippet">
+                <div class="code-block__header code-block__header--tabs">
+                  <span class="code-block__label">Framework</span>
+                  <div class="code-tabs code-tabs--wrap" role="tablist" aria-label="Framework">
+                    <button
+                      type="button"
+                      id="tab-fw-vanilla"
+                      class="code-tab is-active"
+                      data-framework="vanilla"
+                      role="tab"
+                      aria-selected="true"
+                      aria-controls="panel-fw-snippet"
+                    >
+                      Vanilla JS
+                    </button>
+                    <button
+                      type="button"
+                      id="tab-fw-react"
+                      class="code-tab"
+                      data-framework="react"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-fw-snippet"
+                    >
+                      React
+                    </button>
+                    <button
+                      type="button"
+                      id="tab-fw-vue"
+                      class="code-tab"
+                      data-framework="vue"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-fw-snippet"
+                    >
+                      Vue
+                    </button>
+                    <button
+                      type="button"
+                      id="tab-fw-solid"
+                      class="code-tab"
+                      data-framework="solid"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-fw-snippet"
+                    >
+                      Solid
+                    </button>
+                    <button
+                      type="button"
+                      id="tab-fw-angular"
+                      class="code-tab"
+                      data-framework="angular"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-fw-snippet"
+                    >
+                      Angular
+                    </button>
+                    <button
+                      type="button"
+                      id="tab-fw-svelte"
+                      class="code-tab"
+                      data-framework="svelte"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-fw-snippet"
+                    >
+                      Svelte
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    class="code-block__copy btn btn--primary btn--sm"
+                    id="copy-snippet"
+                    aria-describedby="config-snippet"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <pre
+                  id="config-snippet"
+                  class="code-block__pre code-block__pre--tall"
+                  tabindex="0"
+                  role="tabpanel"
+                  aria-labelledby="tab-fw-vanilla"
+                  aria-label="Integration code snippet"
+                ></pre>
+              </div>
+            </div>
+          </section>
+
+          <section class="hero hero--end" id="cta-anchor-end">
+            <p class="hero__eyebrow">End of preview</p>
+            <h2 class="hero__title">You made it</h2>
+            <p class="hero__lead">
+              The cup should be full and the label visible. Click the cup to open the Buy Me a
+              Coffee profile in a new tab.
+            </p>
+          </section>
+          <div class="cta-anchor bmc-cta-container" id="preview-bmc-cta-container"></div>
+        </div>
+      </section>
+      </div>
+    </main>
+
+    <p id="scroll-reveal-hint" class="scroll-reveal-hint" aria-live="polite" hidden>
+      Scroll down to reveal the cup ↓
+    </p>
+
+    <div id="copy-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
