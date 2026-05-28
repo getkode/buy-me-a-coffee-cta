@@ -280,13 +280,24 @@ if (isCtaVisible(state)) {
 
 Mount the CTA after your component loads and call `destroy()` on unmount. Use `updateConfig()` when props change — do not reimplement scroll logic in framework state.
 
+Runnable framework examples install from a packed tarball (same as `pnpm add`). From the repo root:
+
+```bash
+pnpm example:react:setup
+pnpm example:react:dev
+```
+
+Replace `react` with `vue`, `solid`, `angular`, `svelte`, or `vanilla` for other frameworks (`example:vue:setup`, `example:vue:dev`, and so on).
+
+### React
+
 ```tsx
 import { useEffect, useRef } from "react";
 import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
 
-export function BuyMeCoffeeCta(config: CoffeeCtaConfig) {
-  const ctaRef = useRef<CoffeeCtaInstance>();
+export function BuyMeCoffeeCta({ config }: { config: CoffeeCtaConfig }) {
+  const ctaRef = useRef<CoffeeCtaInstance | undefined>(undefined);
 
   useEffect(() => {
     ctaRef.current = createCoffeeCta(config);
@@ -300,10 +311,43 @@ export function BuyMeCoffeeCta(config: CoffeeCtaConfig) {
   return null;
 }
 
-// <BuyMeCoffeeCta username="yourname" label="Buy me a coffee" emoji="☕" />
+// <BuyMeCoffeeCta config={{ username: "yourname", label: "Buy me a coffee", emoji: "☕" }} />
 ```
 
-For in-flow placement, mount into a ref-backed container and pass `anchor: ref.current` instead of a CSS selector. The [playground](https://getkode.github.io/buy-me-a-coffee-cta/) includes Vue, Solid, Angular, and Svelte snippets.
+### Vue
+
+```vue
+<script setup lang="ts">
+import { onMounted, onUnmounted, shallowRef, watch } from "vue";
+import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
+import "buy-me-a-coffee-cta/style.css";
+
+const props = defineProps<{ config: CoffeeCtaConfig }>();
+const cta = shallowRef<CoffeeCtaInstance>();
+
+onMounted(() => {
+  cta.value = createCoffeeCta(props.config);
+});
+
+watch(
+  () => props.config,
+  (next) => cta.value?.updateConfig(next),
+  { deep: true },
+);
+
+onUnmounted(() => {
+  cta.value?.destroy();
+});
+</script>
+
+<!-- <BuyMeCoffeeCta :config="ctaConfig" /> -->
+```
+
+### Solid, Angular, Svelte, Vanilla JS
+
+Use the matching `pnpm example:<framework>:setup` and `pnpm example:<framework>:dev` commands above. The [playground](https://getkode.github.io/buy-me-a-coffee-cta/) copies snippets for all frameworks with your custom config.
+
+For in-flow placement, mount into a ref-backed container and pass `anchor: ref.current` instead of a CSS selector.
 
 ## Playground
 

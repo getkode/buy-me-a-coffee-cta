@@ -13,16 +13,110 @@ initProseCopyButtons();
 initDocsFrameworkSnippets();
 initDocsSidebar();
 
+function describeScrollTarget(element: HTMLElement) {
+	const style = getComputedStyle(element);
+	return {
+		selector:
+			element.id !== ""
+				? `#${element.id}`
+				: `${element.tagName.toLowerCase()}${element.className ? `.${element.className.split(/\s+/).join(".")}` : ""}`,
+		overflowY: style.overflowY,
+		scrollTop: element.scrollTop,
+		scrollHeight: element.scrollHeight,
+		clientHeight: element.clientHeight,
+		canScroll: element.scrollHeight > element.clientHeight + 1,
+	};
+}
+
 function getDocsScrollRoot(): HTMLElement | null {
-	return document.querySelector("main.page--docs");
+	const main = document.getElementById("docs-main");
+	return main instanceof HTMLElement ? main : null;
+}
+
+function logDocsScrollTargets(scrollRoot: HTMLElement) {
+	const candidates = [
+		document.documentElement,
+		document.body,
+		document.querySelector("main.page--docs"),
+		document.querySelector(".page__layout"),
+		document.querySelector(".page__content"),
+		document.querySelector(".page__sidebar.page__toc"),
+		document.querySelector(".page__sidebar .page__toc-list"),
+	].filter((node): node is HTMLElement => node instanceof HTMLElement);
+
+	console.group("[docs] scroll targets");
+	console.log("resolved scroll root:", describeScrollTarget(scrollRoot));
+	console.table(candidates.map(describeScrollTarget));
+	console.groupEnd();
+}
+
+function isDocsMobileToc(): boolean {
+	return window.matchMedia("(max-width: 900px)").matches;
 }
 
 function getDocsScrollOffset(scrollRoot: HTMLElement): number {
+	if (!isDocsMobileToc()) return 12;
+
 	const toc = scrollRoot.querySelector(".page__sidebar.page__toc");
 	if (!(toc instanceof HTMLElement)) return 12;
-	const style = getComputedStyle(toc);
-	if (style.position !== "sticky") return 12;
 	return Math.ceil(toc.getBoundingClientRect().height) + 8;
+}
+
+const DOCS_SCROLL_EDGE = 2;
+
+function getSectionAnchor(section: HTMLElement): HTMLElement {
+	return section.querySelector("h2") ?? section;
+}
+
+function getDocsViewportCenter(scrollRoot: HTMLElement): number {
+	const rootRect = scrollRoot.getBoundingClientRect();
+	const visibleTop = rootRect.top + getDocsScrollOffset(scrollRoot);
+	return (visibleTop + rootRect.bottom) / 2;
+}
+
+function isAtDocsScrollTop(scrollRoot: HTMLElement): boolean {
+	return scrollRoot.scrollTop <= DOCS_SCROLL_EDGE;
+}
+
+function isAtDocsScrollBottom(scrollRoot: HTMLElement): boolean {
+	return scrollRoot.scrollTop + scrollRoot.clientHeight >= scrollRoot.scrollHeight - DOCS_SCROLL_EDGE;
+}
+
+function getActiveSectionId(sections: HTMLElement[], scrollRoot: HTMLElement): string | null {
+	if (sections.length === 0) return null;
+
+	if (isAtDocsScrollTop(scrollRoot)) {
+		return sections[0]!.id;
+	}
+
+	if (isAtDocsScrollBottom(scrollRoot)) {
+		return sections[sections.length - 1]!.id;
+	}
+
+	const viewportCenter = getDocsViewportCenter(scrollRoot);
+	const secondSection = sections[1];
+
+	if (secondSection) {
+		const secondTop = getSectionAnchor(secondSection).getBoundingClientRect().top;
+		if (secondTop > viewportCenter) {
+			return sections[0]!.id;
+		}
+	}
+
+	let active = sections[0]!;
+	let closestTop = -Infinity;
+
+	for (const section of sections) {
+		const top = getSectionAnchor(section).getBoundingClientRect().top;
+		if (top > viewportCenter) continue;
+
+		if (top > closestTop) {
+			closestTop = top;
+			active = section;
+		}
+	}
+
+	return active.id;
 }
 
 function scrollDocsSectionIntoView(target: HTMLElement, scrollRoot: HTMLElement, smooth = true) {
@@ -82,18 +176,42 @@ function scrollActiveTocLinkIntoView(activeLink: HTMLAnchorElement) {
 	}
 }
 
+function getLinkSectionId(link: HTMLAnchorElement): string {
+	const href = link.getAttribute("href") ?? "";
+	if (href.startsWith("#")) return href.slice(1);
+	try {
+		return new URL(href, window.location.href).hash.slice(1);
+	} catch {
+		return link.hash.slice(1);
+	}
+}
+
 function initDocsSidebar() {
-	const scrollRoot = getDocsScrollRoot();
 	const links = [...document.querySelectorAll<HTMLAnchorElement>(".page__sidebar .page__toc-list a")];
 	const sections = links
-		.map((link) => document.querySelector(link.getAttribute("href") ?? ""))
+		.map((link) => document.getElementById(getLinkSectionId(link)))
 		.filter((section): section is HTMLElement => section instanceof HTMLElement);
+	const scrollRoot = getDocsScrollRoot();
 	if (sections.length === 0 || !(scrollRoot instanceof HTMLElement)) return;
 
+	if (new URLSearchParams(window.location.search).has("debug-scroll")) {
+		logDocsScrollTargets(scrollRoot);
+	}
+	(window as Window & {__buyMeDocsScrollDebug?: () => void}).__buyMeDocsScrollDebug = () => {
+		const root = getDocsScrollRoot();
+		if (root) logDocsScrollTargets(root);
+	};
+
+	let activeId = "";
+	let syncScheduled = false;
+
 	const setActive = (id: string) => {
+		if (id === activeId) return;
+		activeId = id;
+
 		let activeLink: HTMLAnchorElement | undefined;
 		for (const link of links) {
-			const active = link.hash === `#${id}`;
+			const active = getLinkSectionId(link) === id;
 			link.classList.toggle("is-active", active);
 			if (active) {
 				link.setAttribute("aria-current", "location");
@@ -105,49 +223,72 @@ function initDocsSidebar() {
 		if (activeLink) scrollActiveTocLinkIntoView(activeLink);
 	};
 
-	for (const link of links) {
-		link.addEventListener("click", (event) => {
-			const id = link.hash.slice(1);
-			const target = document.getElementById(id);
-			if (!target) return;
-			event.preventDefault();
-			scrollDocsSectionIntoView(target, scrollRoot, true);
-			history.pushState(null, "", link.hash);
-			setActive(id);
-		});
-	}
+	const syncActiveFromScroll = () => {
+		const root = getDocsScrollRoot();
+		if (!(root instanceof HTMLElement)) return;
+		const id = getActiveSectionId(sections, root);
+		if (id) setActive(id);
+	};
 
-	const createObserver = () => {
-		const topOffset = getDocsScrollOffset(scrollRoot);
+	const scheduleSync = () => {
+		if (syncScheduled) return;
+		syncScheduled = true;
+		requestAnimationFrame(() => {
+			syncScheduled = false;
+			syncActiveFromScroll();
+		});
+	};
+
+	const createSectionObserver = () => {
+		const root = getDocsScrollRoot();
+		if (!(root instanceof HTMLElement)) return null;
+
+		const topOffset = getDocsScrollOffset(root);
 		return new IntersectionObserver(
-			(entries) => {
-				const visible = entries
-					.filter((entry) => entry.isIntersecting)
-					.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-				const section = visible[0]?.target;
-				if (section instanceof HTMLElement && section.id) {
-					setActive(section.id);
-				}
+			() => {
+				scheduleSync();
 			},
 			{
-				root: scrollRoot,
-				rootMargin: `-${topOffset}px 0px -55% 0px`,
-				threshold: 0,
+				root,
+				rootMargin: `-${topOffset}px 0px -45% 0px`,
+				threshold: [0, 0.25, 0.5, 0.75, 1],
 			}
 		);
 	};
 
-	let observer = createObserver();
-	for (const section of sections) {
-		observer.observe(section);
+	let sectionObserver = createSectionObserver();
+	if (sectionObserver) {
+		for (const section of sections) {
+			sectionObserver.observe(getSectionAnchor(section));
+		}
 	}
 
+	for (const link of links) {
+		link.addEventListener("click", (event) => {
+			const id = getLinkSectionId(link);
+			const target = document.getElementById(id);
+			const root = getDocsScrollRoot();
+			if (!target || !(root instanceof HTMLElement)) return;
+			event.preventDefault();
+			scrollDocsSectionIntoView(target, root, true);
+			const hash = link.getAttribute("href")?.startsWith("#") ? link.getAttribute("href")! : `#${id}`;
+			history.pushState(null, "", hash);
+			setActive(id);
+		});
+	}
+
+	scrollRoot.addEventListener("scroll", scheduleSync, {passive: true});
+	scrollRoot.addEventListener("scrollend", scheduleSync, {passive: true});
+
 	window.addEventListener("resize", () => {
-		observer.disconnect();
-		observer = createObserver();
-		for (const section of sections) {
-			observer.observe(section);
+		sectionObserver?.disconnect();
+		sectionObserver = createSectionObserver();
+		if (sectionObserver) {
+			for (const section of sections) {
+				sectionObserver.observe(getSectionAnchor(section));
+			}
 		}
+		scheduleSync();
 		const activeLink = links.find((link) => link.classList.contains("is-active"));
 		if (activeLink) scrollActiveTocLinkIntoView(activeLink);
 	});
@@ -157,9 +298,11 @@ function initDocsSidebar() {
 		setActive(hash);
 		const target = document.getElementById(hash);
 		if (target) scrollDocsSectionIntoView(target, scrollRoot, false);
-	} else if (sections[0]) {
-		setActive(sections[0].id);
+	} else {
+		scheduleSync();
 	}
+
+	requestAnimationFrame(scheduleSync);
 }
 
 function getPreCodeText(pre: HTMLElement): string {

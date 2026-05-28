@@ -42,7 +42,21 @@
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"smoke-test": "node scripts/smoke-test.mjs",
-		"prepublishOnly": "pnpm build && pnpm test && pnpm smoke-test"
+		"verify": "pnpm build && pnpm test && pnpm smoke-test",
+		"release": "pnpm publish",
+		"example:react:setup": "node scripts/setup-example.mjs react",
+		"example:react:dev": "pnpm --dir examples/react dev",
+		"example:vue:setup": "node scripts/setup-example.mjs vue",
+		"example:vue:dev": "pnpm --dir examples/vue dev",
+		"example:solid:setup": "node scripts/setup-example.mjs solid",
+		"example:solid:dev": "pnpm --dir examples/solid dev",
+		"example:angular:setup": "node scripts/setup-example.mjs angular",
+		"example:angular:dev": "pnpm --dir examples/angular start",
+		"example:svelte:setup": "node scripts/setup-example.mjs svelte",
+		"example:svelte:dev": "pnpm --dir examples/svelte dev",
+		"example:vanilla:setup": "node scripts/setup-example.mjs vanilla-js",
+		"example:vanilla:dev": "pnpm --dir examples/vanilla-js dev",
+		"prepublishOnly": "pnpm verify"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

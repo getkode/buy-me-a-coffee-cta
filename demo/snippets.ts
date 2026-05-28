@@ -65,35 +65,28 @@ function configPropType(anchored: boolean): string {
 	return anchored ? 'Omit<CoffeeCtaConfig, "anchor">' : "CoffeeCtaConfig";
 }
 
-function buildEmbeddedReactEffect(anchored: boolean, configVar = "config"): string {
-	if (anchored) {
-		return `    if (!anchorRef.current) return;
-    ctaRef.current = createCoffeeCta({ ...${configVar}, anchor: anchorRef.current });`;
-	}
-	return `    ctaRef.current = createCoffeeCta(${configVar});`;
-}
-
-function buildUsageComment(configObject: string): string {
-	const props = configObject
+function buildUsageComment(configObject: string, framework: FrameworkId): string {
+	const configOneLine = configObject
 		.trim()
 		.split("\n")
-		.slice(1, -1)
 		.map((line) => line.trim())
-		.filter((line) => line && !line.startsWith("anchor:"))
-		.map((line) => {
-			const match = line.match(/^(\w+):\s*(.+?),?\s*$/);
-			if (!match) return null;
-			const [, key, value] = match;
-			if (value.startsWith("{") || value.startsWith("[")) return null;
-			return `${key}={${value}}`;
-		})
-		.filter(Boolean);
+		.filter(Boolean)
+		.join(" ");
 
-	if (props.length === 0) {
-		return '// <BuyMeCoffeeCta username="yourname" label="Buy me a coffee" emoji="☕" />';
+	switch (framework) {
+		case "react":
+			return `// <BuyMeCoffeeCta config={${configOneLine}} />`;
+		case "vue":
+			return `<!-- <BuyMeCoffeeCta :config="ctaConfig" /> -->`;
+		case "solid":
+			return `// <BuyMeCoffeeCta {...ctaConfig} />`;
+		case "angular":
+			return `<!-- <app-buy-me-coffee-cta [config]="ctaConfig" /> -->`;
+		case "svelte":
+			return `<!-- <BuyMeCoffeeCta {config} /> -->`;
+		default:
+			return "";
 	}
-
-	return `// <BuyMeCoffeeCta\n//   ${props.join("\n//   ")}\n// />`;
 }
 
 export function buildConfigObject(configLines: string[]): string {
@@ -177,8 +170,7 @@ createCoffeeCta({ ...config, anchor: anchorEl });
 </script>`;
 				}
 
-				return `<div id="coffee-cta-root"></div>
-<script type="module">
+				return `<script type="module">
 import { createCoffeeCta } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
 
@@ -195,7 +187,8 @@ createCoffeeCta(${configObject});`;
 
 		case "react":
 			if (embeddedConfig) {
-				return `import { useEffect, useRef } from "react";
+				if (anchored) {
+					return `import { useEffect, useRef } from "react";
 import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
 
@@ -203,14 +196,33 @@ const config: ${propType} = ${config};
 
 export function BuyMeCoffeeCta() {
   const anchorRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<CoffeeCtaInstance>();
+  const ctaRef = useRef<CoffeeCtaInstance | undefined>(undefined);
 
   useEffect(() => {
-${buildEmbeddedReactEffect(anchored)}
+    if (!anchorRef.current) return;
+    ctaRef.current = createCoffeeCta({ ...config, anchor: anchorRef.current });
     return () => ctaRef.current?.destroy();
   }, []);
 
   return <div ref={anchorRef} />;
+}`;
+				}
+
+				return `import { useEffect, useRef } from "react";
+import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
+import "buy-me-a-coffee-cta/style.css";
+
+const config: CoffeeCtaConfig = ${config};
+
+export function BuyMeCoffeeCta() {
+  const ctaRef = useRef<CoffeeCtaInstance | undefined>(undefined);
+
+  useEffect(() => {
+    ctaRef.current = createCoffeeCta(config);
+    return () => ctaRef.current?.destroy();
+  }, []);
+
+  return null;
 }`;
 			}
 
@@ -221,9 +233,9 @@ import "buy-me-a-coffee-cta/style.css";
 
 type BuyMeCoffeeCtaProps = Omit<CoffeeCtaConfig, "anchor">;
 
-export function BuyMeCoffeeCta(config: BuyMeCoffeeCtaProps) {
+export function BuyMeCoffeeCta({ config }: { config: BuyMeCoffeeCtaProps }) {
   const anchorRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<CoffeeCtaInstance>();
+  const ctaRef = useRef<CoffeeCtaInstance | undefined>(undefined);
 
   useEffect(() => {
     if (!anchorRef.current) return;
@@ -238,15 +250,15 @@ export function BuyMeCoffeeCta(config: BuyMeCoffeeCtaProps) {
   return <div ref={anchorRef} />;
 }
 
-${buildUsageComment(configObject)}`;
+${buildUsageComment(configObject, "react")}`;
 			}
 
 			return `import { useEffect, useRef } from "react";
 import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
 
-export function BuyMeCoffeeCta(config: CoffeeCtaConfig) {
-  const ctaRef = useRef<CoffeeCtaInstance>();
+export function BuyMeCoffeeCta({ config }: { config: CoffeeCtaConfig }) {
+  const ctaRef = useRef<CoffeeCtaInstance | undefined>(undefined);
 
   useEffect(() => {
     ctaRef.current = createCoffeeCta(config);
@@ -260,16 +272,12 @@ export function BuyMeCoffeeCta(config: CoffeeCtaConfig) {
   return null;
 }
 
-${buildUsageComment(configObject)}`;
+${buildUsageComment(configObject, "react")}`;
 
 		case "vue":
 			if (embeddedConfig) {
-				const createCall = anchored
-					? `if (!anchorEl.value) return;
-  cta.value = createCoffeeCta({ ...config, anchor: anchorEl.value });`
-					: "cta.value = createCoffeeCta(config);";
-
-				return `<script setup lang="ts">
+				if (anchored) {
+					return `<script setup lang="ts">
 import { onMounted, onUnmounted, shallowRef, useTemplateRef } from "vue";
 import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
@@ -280,7 +288,8 @@ const anchorEl = useTemplateRef<HTMLDivElement>("anchorEl");
 const cta = shallowRef<CoffeeCtaInstance>();
 
 onMounted(() => {
-  ${createCall}
+  if (!anchorEl.value) return;
+  cta.value = createCoffeeCta({ ...config, anchor: anchorEl.value });
 });
 
 onUnmounted(() => {
@@ -291,6 +300,25 @@ onUnmounted(() => {
 <template>
   <div ref="anchorEl" />
 </template>`;
+				}
+
+				return `<script setup lang="ts">
+import { onMounted, onUnmounted, shallowRef } from "vue";
+import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
+import "buy-me-a-coffee-cta/style.css";
+
+const config: CoffeeCtaConfig = ${indentBlock(config, 0).trim()};
+
+const cta = shallowRef<CoffeeCtaInstance>();
+
+onMounted(() => {
+  cta.value = createCoffeeCta(config);
+});
+
+onUnmounted(() => {
+  cta.value?.destroy();
+});
+</script>`;
 			}
 
 			if (anchored) {
@@ -299,17 +327,17 @@ import { onMounted, onUnmounted, shallowRef, useTemplateRef, watch } from "vue";
 import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
 
-const props = defineProps<${propType}>();
+const props = defineProps<{ config: ${propType} }>();
 const anchorEl = useTemplateRef<HTMLDivElement>("anchorEl");
 const cta = shallowRef<CoffeeCtaInstance>();
 
 onMounted(() => {
   if (!anchorEl.value) return;
-  cta.value = createCoffeeCta({ ...props, anchor: anchorEl.value });
+  cta.value = createCoffeeCta({ ...props.config, anchor: anchorEl.value });
 });
 
 watch(
-  () => props,
+  () => props.config,
   (next) => cta.value?.updateConfig(next),
   { deep: true },
 );
@@ -321,7 +349,9 @@ onUnmounted(() => {
 
 <template>
   <div ref="anchorEl" />
-</template>`;
+</template>
+
+${buildUsageComment(configObject, "vue")}`;
 			}
 
 			return `<script setup lang="ts">
@@ -329,15 +359,15 @@ import { onMounted, onUnmounted, shallowRef, watch } from "vue";
 import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
 
-const props = defineProps<CoffeeCtaConfig>();
+const props = defineProps<{ config: CoffeeCtaConfig }>();
 const cta = shallowRef<CoffeeCtaInstance>();
 
 onMounted(() => {
-  cta.value = createCoffeeCta(props);
+  cta.value = createCoffeeCta(props.config);
 });
 
 watch(
-  () => props,
+  () => props.config,
   (next) => cta.value?.updateConfig(next),
   { deep: true },
 );
@@ -345,16 +375,14 @@ watch(
 onUnmounted(() => {
   cta.value?.destroy();
 });
-</script>`;
+</script>
+
+${buildUsageComment(configObject, "vue")}`;
 
 		case "solid":
 			if (embeddedConfig) {
-				const createCall = anchored
-					? `if (!anchorEl) return;
-    const cta: CoffeeCtaInstance = createCoffeeCta({ ...config, anchor: anchorEl });`
-					: "const cta: CoffeeCtaInstance = createCoffeeCta(config);";
-
-				return `import { onMount, onCleanup } from "solid-js";
+				if (anchored) {
+					return `import { onCleanup, onMount } from "solid-js";
 import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
 import "buy-me-a-coffee-cta/style.css";
 
@@ -362,13 +390,33 @@ const config: ${propType} = ${config};
 
 export function BuyMeCoffeeCta() {
   let anchorEl: HTMLDivElement | undefined;
+  let cta: CoffeeCtaInstance | undefined;
 
   onMount(() => {
-    ${createCall}
-    onCleanup(() => cta.destroy());
+    if (!anchorEl) return;
+    cta = createCoffeeCta({ ...config, anchor: anchorEl });
+    onCleanup(() => cta?.destroy());
   });
 
   return <div ref={anchorEl} />;
+}`;
+				}
+
+				return `import { onCleanup, onMount } from "solid-js";
+import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
+import "buy-me-a-coffee-cta/style.css";
+
+const config: CoffeeCtaConfig = ${config};
+
+export function BuyMeCoffeeCta() {
+  let cta: CoffeeCtaInstance | undefined;
+
+  onMount(() => {
+    cta = createCoffeeCta(config);
+    onCleanup(() => cta!.destroy());
+  });
+
+  return null;
 }`;
 			}
 
@@ -392,7 +440,9 @@ export function BuyMeCoffeeCta(props: ${propType}) {
   });
 
   return <div ref={anchorEl} />;
-}`;
+}
+
+${buildUsageComment(configObject, "solid")}`;
 			}
 
 			return `import { createEffect, onCleanup, onMount } from "solid-js";
@@ -404,7 +454,7 @@ export function BuyMeCoffeeCta(props: CoffeeCtaConfig) {
 
   onMount(() => {
     cta = createCoffeeCta(props);
-    onCleanup(() => cta.destroy());
+    onCleanup(() => cta!.destroy());
   });
 
   createEffect(() => {
@@ -412,7 +462,9 @@ export function BuyMeCoffeeCta(props: CoffeeCtaConfig) {
   });
 
   return null;
-}`;
+}
+
+${buildUsageComment(configObject, "solid")}`;
 
 		case "angular":
 			if (embeddedConfig) {
@@ -454,7 +506,7 @@ const config: CoffeeCtaConfig = ${indentBlock(config, 0).trim()};
 @Component({
   selector: "app-buy-me-coffee-cta",
   standalone: true,
-  template: \`<div #anchor></div>\`,
+  template: "",
 })
 export class BuyMeCoffeeCtaComponent implements OnInit, OnDestroy {
   private cta?: CoffeeCtaInstance;
@@ -535,16 +587,14 @@ export class BuyMeCoffeeCtaComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.cta?.destroy();
   }
-}`;
+}
+
+${buildUsageComment(configObject, "angular")}`;
 
 		case "svelte":
 			if (embeddedConfig) {
-				const createCall = anchored
-					? `if (!anchorEl) return;
-    cta = createCoffeeCta({ ...config, anchor: anchorEl });`
-					: "cta = createCoffeeCta(config);";
-
-				return `<script lang="ts">
+				if (anchored) {
+					return `<script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
   import "buy-me-a-coffee-cta/style.css";
@@ -555,7 +605,8 @@ export class BuyMeCoffeeCtaComponent implements OnInit, OnChanges, OnDestroy {
   let cta: CoffeeCtaInstance | undefined;
 
   onMount(() => {
-    ${createCall}
+    if (!anchorEl) return;
+    cta = createCoffeeCta({ ...config, anchor: anchorEl });
   });
 
   onDestroy(() => {
@@ -564,6 +615,25 @@ export class BuyMeCoffeeCtaComponent implements OnInit, OnChanges, OnDestroy {
 </script>
 
 <div bind:this={anchorEl}></div>`;
+				}
+
+				return `<script lang="ts">
+  import { onDestroy, onMount } from "svelte";
+  import { createCoffeeCta, type CoffeeCtaConfig, type CoffeeCtaInstance } from "buy-me-a-coffee-cta";
+  import "buy-me-a-coffee-cta/style.css";
+
+  const config: CoffeeCtaConfig = ${indentBlock(config, 2).trimStart()};
+
+  let cta: CoffeeCtaInstance | undefined;
+
+  onMount(() => {
+    cta = createCoffeeCta(config);
+  });
+
+  onDestroy(() => {
+    cta?.destroy();
+  });
+</script>`;
 			}
 
 			if (anchored) {
@@ -589,7 +659,9 @@ export class BuyMeCoffeeCtaComponent implements OnInit, OnChanges, OnDestroy {
   });
 </script>
 
-<div bind:this={anchorEl}></div>`;
+<div bind:this={anchorEl}></div>
+
+${buildUsageComment(configObject, "svelte")}`;
 			}
 
 			return `<script lang="ts">
@@ -610,6 +682,8 @@ export class BuyMeCoffeeCtaComponent implements OnInit, OnChanges, OnDestroy {
   onDestroy(() => {
     cta?.destroy();
   });
-</script>`;
+</script>
+
+${buildUsageComment(configObject, "svelte")}`;
 	}
 }

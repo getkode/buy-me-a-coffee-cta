@@ -150,7 +150,7 @@ html[data-theme="dark"] {
   position: sticky;
   top: 0;
   height: var(--site-header-height);
-  z-index: 5;
+  z-index: 10;
   flex: 0 0 auto;
   overflow: visible;
   border-bottom: 1px solid var(--demo-border);
@@ -336,9 +336,7 @@ html[data-theme="dark"] {
     clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.page--about .page__lead,
-.page--about .prose p,
-.page--about .prose ul {
+.page--about .page__lead {
   max-width: none;
 }
 
@@ -414,7 +412,7 @@ html[data-theme="dark"] {
 .page--playground .preview__header {
   position: sticky;
   top: 0;
-  z-index: 6;
+  z-index: 2;
   border-right: 1px solid color-mix(in srgb, var(--demo-border) 85%, transparent);
 }
 
@@ -617,12 +615,6 @@ html[data-theme="dark"] {
   margin: 0 0 0.75rem;
   font-size: 1.25rem;
   letter-spacing: -0.02em;
-}
-
-.prose p,
-.prose ul {
-  margin: 0 0 0.85rem;
-  max-width: 68ch;
 }
 
 .prose ul {
