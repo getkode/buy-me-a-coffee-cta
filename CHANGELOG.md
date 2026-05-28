@@ -12,11 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tooltip position** — the tooltip now uses the same side on desktop and mobile. The previous mobile-only override that moved `auto` tooltips above the cup on small screens was removed.
 - **`darkMode: "auto"`** — theme switching is CSS-only via `prefers-color-scheme`. JS sets light defaults and exposes `darkTheme` tokens; no media-query listener in auto mode.
 - **Public API** — removed internal exports `ResolvedCoffeeCtaConfig` and `PositionMode`; added `isCtaVisible` alongside other scroll helpers.
+- **Framework snippets** — playground and docs snippets use `config` prop wrappers for React and Vue; Solid, Angular, and Svelte snippets include matching usage comments.
+- **README** — framework integration section documents tarball-based `pnpm example:<framework>:setup` and `example:<framework>:dev` workflows.
 
 ### Fixed
 
 - **`updateConfig`** — dark mode listeners are rebound when `darkMode` changes.
 - **`darkMode: "class"`** — detects both `data-theme="dark"` and `class="dark"` on `<html>`.
+- **Docs TOC** — sidebar highlights track scroll position on `#docs-main` via `IntersectionObserver` and scroll listeners; click and hash navigation scroll sections into view correctly.
+- **Demo header tooltips** — site header stacks above the playground preview bar so header tooltips are not clipped.
 
 ### Added
 
@@ -25,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dark mode and `detectDark` tests.
 - `packageManager` and `engines` fields in `package.json`.
 - Cross-platform CSS copy script for builds.
+- Framework example workflow — `scripts/setup-example.mjs` and `pnpm example:<framework>:setup` / `example:<framework>:dev` for React, Vue, Solid, Angular, Svelte, and Vanilla JS.
+- `pnpm verify` and `pnpm release` scripts for pre-publish checks and npm publish.
 
 ## [0.1.0] - 2026-05-25 (unpublished)
 
